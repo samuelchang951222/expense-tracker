@@ -1,0 +1,43 @@
+{
+  "name": "daily-expense-tracker",
+  "version": "1.0.0",
+  "description": "A beautiful desktop expense tracker that helps you stay on budget — daily, weekly, or monthly.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win --x64",
+    "build:mac": "electron-builder --mac --x64",
+    "build:linux": "electron-builder --linux --x64",
+    "build:all": "electron-builder --win --mac --linux --x64"
+  },
+  "build": {
+    "appId": "com.expensetracker.app",
+    "productName": "Expense Tracker",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": ["portable", "nsis"],
+      "icon": null,
+      "artifactName": "ExpenseTracker-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "artifactName": "ExpenseTracker-${version}.${ext}"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "artifactName": "ExpenseTracker-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "keywords": ["expense", "tracker", "budget", "finance"],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}
