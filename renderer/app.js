@@ -321,6 +321,9 @@ async function init() {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       STATE.activePeriod = tab.dataset.period;
+      const showAllBtn = document.getElementById('showAllBtn');
+      showAllBtn.dataset.mode = 'period';
+      showAllBtn.textContent = 'All Time';
       renderAll();
       // Also re-check overspend
       window.electronAPI.checkOverspend().then(r => {
@@ -356,15 +359,21 @@ async function init() {
   });
 
   // Show All / toggle filter
-  document.getElementById('showAllBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('showAllBtn');
-    if (btn.textContent === 'All Time') {
-      btn.textContent = 'Today';
-      // Show all expenses
+  const showAllBtn = document.getElementById('showAllBtn');
+  showAllBtn.dataset.mode = 'period';
+
+  showAllBtn.addEventListener('click', async () => {
+    const btn = showAllBtn;
+    const periodLabel = STATE.activePeriod.charAt(0).toUpperCase() + STATE.activePeriod.slice(1);
+    const isAllView = btn.dataset.mode === 'all';
+
+    if (!isAllView) {
+      btn.dataset.mode = 'all';
+      btn.textContent = `Back to ${periodLabel}`;
       const all = [...STATE.expenses].sort((a, b) => b.createdAt - a.createdAt);
       renderTransactionList(all);
-      btn.textContent = STATE.activePeriod.charAt(0).toUpperCase() + STATE.activePeriod.slice(1);
     } else {
+      btn.dataset.mode = 'period';
       btn.textContent = 'All Time';
       renderAll();
     }
