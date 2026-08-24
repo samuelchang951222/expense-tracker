@@ -29,3 +29,5 @@ Adding a new IPC call means editing three places in lockstep: the handler in `ma
 - `npm start` — run the app in dev mode.
 - `npm run build:win` / `build:mac` / `build:linux` / `build:all` — package via `electron-builder` (config lives in [package.json](package.json)).
 - No test suite or linter is configured in this project.
+
+
