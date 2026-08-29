@@ -41,6 +41,14 @@ input, select, button, textarea {
   outline: none;
 }
 
+body.app-loading .main-content,
+body.show-welcome .main-content {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  visibility: hidden;
+}
+
 /* ============================
    SCROLLBAR
    ============================ */
@@ -117,6 +125,7 @@ input, select, button, textarea {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  transition: opacity 0.32s ease, transform 0.32s ease, visibility 0s linear 0.32s;
 }
 
 /* ============================
@@ -748,4 +757,346 @@ select:focus {
 .btn-secondary:hover {
   background: rgba(79, 70, 229, 0.04);
   color: var(--text-primary);
+}
+
+/* ============================
+   WELCOME SCREEN
+   ============================ */
+.welcome-screen {
+  position: fixed;
+  inset: 48px 0 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 30px 28px 36px;
+  color: #173a31;
+  background:
+    radial-gradient(circle at 16% 17%, rgba(255, 201, 142, 0.3) 0, rgba(255, 201, 142, 0) 27%),
+    radial-gradient(circle at 85% 75%, rgba(118, 211, 177, 0.28) 0, rgba(118, 211, 177, 0) 30%),
+    linear-gradient(160deg, #f9fffc 0%, #eefaf4 52%, #f7fbff 100%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+  visibility: hidden;
+}
+
+body.show-welcome .welcome-screen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
+  visibility: visible;
+}
+
+body.show-welcome .welcome-screen.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-14px);
+}
+
+.welcome-pig-wrap {
+  width: min(76vw, 288px);
+  aspect-ratio: 32 / 29;
+  flex: 0 0 auto;
+  margin: -8px 0 8px;
+  opacity: 0;
+  transform: translateY(18px) scale(0.96);
+}
+
+body.show-welcome .welcome-pig-wrap {
+  animation: welcome-rise 0.72s 0.08s cubic-bezier(0.2, 0.78, 0.24, 1) both;
+}
+
+.piggy-illustration {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: pig-float 4.8s ease-in-out infinite;
+}
+
+.pig-ground-shadow {
+  fill: rgba(34, 98, 76, 0.12);
+  animation: pig-shadow 4.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pig-body { fill: #fa8da1; }
+.pig-belly { fill: #ffadba; opacity: 0.7; }
+.pig-ear { fill: #f77e96; }
+.pig-ear-inner { fill: #e96883; }
+.pig-leg { fill: #f77f97; }
+.pig-hoof {
+  fill: none;
+  stroke: #d9617b;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+.pig-slot {
+  fill: none;
+  stroke: #b84f69;
+  stroke-linecap: round;
+  stroke-width: 8;
+}
+.pig-snout { fill: #f5738d; }
+.pig-snout-highlight { fill: #ff9caf; opacity: 0.75; }
+.pig-nostril { fill: #ad455f; }
+.pig-eye { fill: #5e3140; }
+.pig-eyelash,
+.pig-smile {
+  fill: none;
+  stroke: #703447;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3.5;
+}
+.pig-cheek { fill: #ea667f; opacity: 0.38; }
+.pig-highlight { fill: rgba(255, 255, 255, 0.6); }
+.pig-coin-face { fill: #f6bd42; }
+.pig-coin-ring {
+  fill: none;
+  stroke: #fff0b6;
+  stroke-width: 2;
+}
+.pig-coin-symbol {
+  fill: #a86b13;
+  font-family: var(--font);
+  font-size: 23px;
+  font-weight: 800;
+}
+.pig-sparkle { fill: #f3bb43; }
+
+.pig-eye,
+.pig-tail,
+.pig-ear,
+.pig-coin-drop,
+.sparkle-left,
+.sparkle-right {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pig-eye { animation: pig-blink 5.2s ease-in-out infinite; }
+.pig-tail { animation: pig-tail-wag 2.8s ease-in-out infinite; }
+.pig-ear { animation: pig-ear-wiggle 3.6s ease-in-out infinite; }
+.pig-coin-drop { animation: pig-coin-drop 3.8s 0.8s ease-in-out infinite; }
+.sparkle-left { animation: sparkle-pop 2.6s 0.3s ease-in-out infinite; }
+.sparkle-right { animation: sparkle-pop 2.6s 1.2s ease-in-out infinite; }
+
+.welcome-copy {
+  max-width: 330px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+body.show-welcome .welcome-copy {
+  animation: welcome-rise 0.58s 0.24s cubic-bezier(0.2, 0.78, 0.24, 1) both;
+}
+
+.welcome-kicker {
+  margin-bottom: 9px;
+  color: #248563;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.welcome-copy h1 {
+  color: #173a31;
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.welcome-copy p:last-child {
+  margin-top: 10px;
+  color: #5f776f;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.get-started-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 194px;
+  min-height: 54px;
+  margin-top: 30px;
+  padding: 0 23px 0 25px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #28bd7d 0%, #0b965f 100%);
+  box-shadow: 0 14px 28px rgba(13, 142, 91, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  opacity: 0;
+  transition: box-shadow 0.22s ease, transform 0.22s ease, background 0.22s ease;
+}
+
+body.show-welcome .get-started-btn {
+  animation: welcome-fade 0.48s 0.42s ease both;
+}
+
+.get-started-btn::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -44%;
+  width: 32%;
+  content: '';
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.48s ease;
+}
+
+.get-started-btn > span { position: relative; z-index: 1; }
+.get-started-arrow {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.22s ease;
+}
+
+.get-started-btn:hover {
+  background: linear-gradient(135deg, #2dc788 0%, #078754 100%);
+  box-shadow: 0 18px 32px rgba(13, 142, 91, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.get-started-btn:hover::before { left: 112%; }
+.get-started-btn:hover .get-started-arrow { transform: translateX(3px); }
+.get-started-btn:active {
+  box-shadow: 0 9px 18px rgba(13, 142, 91, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(0);
+}
+.get-started-btn:focus-visible {
+  outline: 3px solid rgba(20, 184, 129, 0.35);
+  outline-offset: 4px;
+}
+
+.welcome-sparkle,
+.welcome-coin {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.welcome-sparkle {
+  color: #efaf2e;
+  font-size: 25px;
+  line-height: 1;
+  animation: welcome-twinkle 3s ease-in-out infinite;
+}
+.sparkle-one { top: 20%; left: 12%; }
+.sparkle-two { top: 48%; right: 10%; font-size: 18px; animation-delay: 1.4s; }
+.welcome-coin {
+  top: 32%;
+  right: 8%;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(218, 159, 36, 0.42);
+  border-radius: 50%;
+  color: #bd8317;
+  background: rgba(255, 228, 148, 0.4);
+  font-size: 15px;
+  font-weight: 800;
+  transform: rotate(14deg);
+  animation: welcome-coin-float 4s ease-in-out infinite;
+}
+
+@keyframes welcome-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes welcome-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pig-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+@keyframes pig-shadow {
+  0%, 100% { opacity: 0.82; transform: scaleX(1); }
+  50% { opacity: 0.5; transform: scaleX(0.84); }
+}
+@keyframes pig-blink {
+  0%, 43%, 47%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(0.1); }
+}
+@keyframes pig-tail-wag {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(9deg); }
+  65% { transform: rotate(-6deg); }
+}
+@keyframes pig-ear-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(-5deg) translateY(-1px); }
+  58% { transform: rotate(2deg); }
+}
+@keyframes pig-coin-drop {
+  0%, 13% { opacity: 0; transform: translateY(-20px) scale(0.82) rotate(-12deg); }
+  20% { opacity: 1; }
+  57% { opacity: 1; transform: translateY(57px) scale(1) rotate(12deg); }
+  65%, 100% { opacity: 0; transform: translateY(62px) scale(0.72) rotate(18deg); }
+}
+@keyframes sparkle-pop {
+  0%, 100% { opacity: 0.45; transform: scale(0.82) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.14) rotate(18deg); }
+}
+@keyframes welcome-twinkle {
+  0%, 100% { opacity: 0.42; transform: scale(0.78) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.12) rotate(18deg); }
+}
+@keyframes welcome-coin-float {
+  0%, 100% { transform: translateY(0) rotate(14deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
+}
+
+@media (max-height: 660px) {
+  .welcome-screen { padding-top: 18px; padding-bottom: 24px; }
+  .welcome-pig-wrap { width: min(67vw, 242px); margin-bottom: 2px; }
+  .welcome-copy h1 { font-size: 27px; }
+  .get-started-btn { margin-top: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-content,
+  .welcome-screen,
+  .get-started-btn,
+  .get-started-arrow,
+  .get-started-btn::before {
+    transition-duration: 0.01ms;
+  }
+
+  .welcome-pig-wrap,
+  .welcome-copy,
+  .get-started-btn,
+  .piggy-illustration,
+  .pig-ground-shadow,
+  .pig-eye,
+  .pig-tail,
+  .pig-ear,
+  .pig-coin-drop,
+  .sparkle-left,
+  .sparkle-right,
+  .welcome-sparkle,
+  .welcome-coin {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
 }

@@ -1,78 +1,53 @@
-# 💸 Daily Expense Tracker
+# Expense Tracker
 
-A beautiful, lightweight desktop app to **track your daily expenses** and **stay on budget**. Built with [Electron](https://www.electronjs.org/).
+Expense Tracker is a private desktop app for recording everyday purchases and staying within a daily, weekly, or monthly budget. Your data stays on your computer; no account or online service is required.
 
-![screenshot](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
-![version](https://img.shields.io/badge/version-1.0.0-green)
+## What You Can Do
 
----
+- Set a spending budget for the period that suits you.
+- Add expenses with an amount, category, and optional description.
+- See how much of your budget is spent and what remains.
+- Review transactions by day, week, month, or across all time.
+- Receive an alert when spending exceeds the selected budget.
 
-## ✨ Features
+## How It Works
 
-- **💰 Set any budget** — Daily, Weekly, or Monthly
-- **📊 Visual progress ring** — See how much you've spent at a glance
-- **🚨 Overspend alerts** — Desktop notification when you go over budget
-- **📝 Quick-add expenses** — Amount, category & description in seconds
-- **📋 Categorized transactions** — Food, Transport, Shopping, Bills & more
-- **📅 Switch views** — Toggle between Daily / Weekly / Monthly summaries
-- **🔒 100% private** — All data stays on your machine, no accounts needed
+The application uses Electron's secure three-process model. The renderer provides the interface, the preload script exposes a small safe API, and the main process owns and stores budget and expense data locally.
 
----
-
-## 🚀 Download & Install
-
-### Windows
-Download `ExpenseTracker-Setup-1.0.0.exe` from the [Releases](https://github.com/samuelchang951222/expense-tracker/releases) page and run it.
-
-### macOS
-Download `ExpenseTracker-1.0.0.dmg` from the [Releases](https://github.com/samuelchang951222/expense-tracker/releases) page, open it, and drag the app to your Applications folder.
-
-### Linux
-Download `ExpenseTracker-1.0.0.AppImage`, make it executable (`chmod +x`) and run it.
-
----
-
-## 🛠️ Build from Source
-
-```bash
-# Clone the repo
-git clone https://github.com/samuelchang951222/expense-tracker.git
-cd expense-tracker
-
-# Install dependencies
-npm install
-
-# Run in dev mode
-npm start
-
-# Build for distribution
-npm run build:win      # Windows
-npm run build:mac      # macOS
-npm run build:linux    # Linux
-npm run build:all      # All platforms
+```mermaid
+flowchart LR
+	User[User] --> Renderer[Renderer<br/>HTML, CSS, JavaScript]
+	Renderer -->|Safe IPC API| Preload[Preload<br/>contextBridge]
+	Preload -->|IPC messages| Main[Main Process<br/>Electron]
+	Main -->|Read and write| Data[(Local data.json)]
+	Main -->|Budget and expense updates| Preload
+	Preload -->|Safe IPC API| Renderer
 ```
 
----
+## Launch From Source
 
-## 🎯 How to Use
+Install a recent Node.js version, then run the following commands from the project folder.
 
-1. **Set your budget** — Click the ⚙️ gear icon, choose Daily / Weekly / Monthly, enter your amount, and save
-2. **Add expenses** — Type the amount, pick a category, optionally add a description, and hit the ➕ button
-3. **Track at a glance** — The ring fills up as you spend. Green = safe, Orange = close, Red = over budget!
-4. **Switch views** — Tap Daily / Weekly / Monthly tabs to see different periods
-5. **Delete mistakes** — Hover any transaction and click 🗑️
+### Windows
 
----
+```powershell
+git clone https://github.com/samuelchang951222/expense-tracker.git
+cd expense-tracker
+npm install
+npm start
+```
 
-## 📁 Data Storage
+### macOS
 
-All your data is stored locally in your user data directory:
-- **Windows**: `%APPDATA%/Expense Tracker/data.json`
-- **macOS**: `~/Library/Application Support/Expense Tracker/data.json`
-- **Linux**: `~/.config/Expense Tracker/data.json`
+```sh
+git clone https://github.com/samuelchang951222/expense-tracker.git
+cd expense-tracker
+npm install
+npm start
+```
 
----
+To create an installable package instead, run `npm run build:win` on Windows or `npm run build:mac` on macOS. Generated files are placed in `dist`.
 
-## 📄 License
+## License
 
 MIT
