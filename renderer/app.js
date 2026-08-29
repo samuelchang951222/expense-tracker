@@ -6,7 +6,8 @@ const STATE = {
   budget: null,        // { type: 'daily'|'weekly'|'monthly', amount: number, setDate: ISO string }
   expenses: [],        // [{ id, amount, category, description, date, createdAt }]
   activePeriod: 'daily',
-  notifications: true
+  notifications: true,
+  onboarded: false
 };
 
 // ---- Helpers ----
@@ -50,6 +51,7 @@ async function loadData() {
   if (data) {
     STATE.budget = data.budget || null;
     STATE.expenses = data.expenses || [];
+    STATE.onboarded = Boolean(data.onboarded);
     // migrate old data
     if (STATE.budget && !STATE.budget.setDate) STATE.budget.setDate = todayISO();
   }
@@ -58,7 +60,8 @@ async function loadData() {
 async function saveData() {
   const result = await window.electronAPI.saveData({
     budget: STATE.budget,
-    expenses: STATE.expenses
+    expenses: STATE.expenses,
+    onboarded: STATE.onboarded
   });
   if (result && result.overspend && result.overspend.overspent) {
     showOverspendAlert(result.overspend);
@@ -297,6 +300,45 @@ function renderAll() {
   renderTransactions();
 }
 
+function showWelcome() {
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  document.body.classList.remove('app-loading', 'show-app');
+  document.body.classList.add('show-welcome');
+  welcomeScreen.setAttribute('aria-hidden', 'false');
+}
+
+function showTracker() {
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  document.body.classList.remove('app-loading', 'show-welcome');
+  document.body.classList.add('show-app');
+  welcomeScreen.setAttribute('aria-hidden', 'true');
+}
+
+async function completeOnboarding() {
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const getStartedBtn = document.getElementById('getStartedBtn');
+
+  if (welcomeScreen.classList.contains('is-leaving')) return;
+
+  getStartedBtn.disabled = true;
+  STATE.onboarded = true;
+  await saveData();
+
+  welcomeScreen.classList.add('is-leaving');
+
+  let fallbackTimer;
+  const finishTransition = (event) => {
+    if (event && (event.target !== welcomeScreen || event.propertyName !== 'opacity')) return;
+    window.clearTimeout(fallbackTimer);
+    welcomeScreen.removeEventListener('transitionend', finishTransition);
+    welcomeScreen.classList.remove('is-leaving');
+    showTracker();
+  };
+
+  welcomeScreen.addEventListener('transitionend', finishTransition);
+  fallbackTimer = window.setTimeout(finishTransition, 500);
+}
+
 // ---- Init ----
 async function init() {
   await loadData();
@@ -312,6 +354,9 @@ async function init() {
   });
 
   renderAll();
+
+  if (STATE.onboarded) showTracker();
+  else showWelcome();
 
   // ---- Event bindings ----
 
@@ -378,6 +423,8 @@ async function init() {
       renderAll();
     }
   });
+
+  document.getElementById('getStartedBtn').addEventListener('click', completeOnboarding);
 
   // Window controls
   document.getElementById('closeBtn').addEventListener('click', () => window.electronAPI.close());
